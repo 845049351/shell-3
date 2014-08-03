@@ -12,7 +12,7 @@ Setting(){
 
 
 #edusoho
-edusoho(){
+Edusoho(){
 	
 	sudo mkdir /var/www
 	cd /var/www
@@ -28,8 +28,7 @@ Nginx(){
 
 	sudo apt-get install -y nginx
    	sudo sed -i '/sendfile on;/ i client_max_body_size 1024M;' /etc/nginx/nginx.conf
-   	sudo /etc/init.d/nginx restart
-
+   	rm /etc/nginx/sites-enabled/default
 }
 
 
@@ -45,9 +44,6 @@ Mysql(){
 	sudo apt-get install -y mysql-server
 	mysql -uroot -proot -e"CREATE DATABASE edusoho DEFAULT CHARACTER SET utf8;"
 	mysql -uroot -proot -e"GRANT ALL PRIVILEGES ON edusoho.* TO 'esuser'@'localhost' IDENTIFIED BY 'edusoho';"
-
-	sudo /etc/init.d/mysql restart	
-    	
 }
 
 
@@ -62,15 +58,16 @@ PHP(){
     sudo sed -i 's/post_max_size.*/post_max_size = 1024M/g' /etc/php5/fpm/php.ini
     sudo sed -i 's/max_execution_time.*/max_execution_time = 300/g' /etc/php5/fpm/php.ini
     sudo sed -i 's/max_input_time.*/max_input_time = 300/g' /etc/php5/fpm/php.ini
+    
     sudo /etc/init.d/php5-fpm restart
-	
 	sudo /etc/init.d/nginx restart
+	sudo /etc/init.d/mysql restart
 }
 
 echo "欢迎使用EDUSOHO安装脚本!"
 
 Setting
-edusoho
+Edusoho
 Nginx
 Mysql
 PHP
