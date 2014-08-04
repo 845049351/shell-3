@@ -64,6 +64,14 @@ PHP(){
 	sudo /etc/init.d/mysql restart
 }
 
+
+Restart(){
+
+	sudo /etc/init.d/php5-fpm restart
+	sudo /etc/init.d/nginx restart
+	sudo /etc/init.d/mysql restart
+}
+
 echo "欢迎使用EDUSOHO安装脚本!"
 
 Setting
@@ -71,4 +79,5 @@ Edusoho
 Nginx
 Mysql
 PHP
+Restart
 
