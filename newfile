@@ -21,6 +21,7 @@ echo "server {
     }
 
     location ~ ^/(app|app_dev)\.php(/|$) {
+        
         fastcgi_pass   unix:/var/run/php5-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
