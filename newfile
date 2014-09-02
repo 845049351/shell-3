@@ -1,7 +1,7 @@
 echo "server {
     listen 80;
 
-    server_name YOUR_DOMAIN ;
+    server_name  127.0.0.1;
 
     root /var/www/edusoho/web;
     
