@@ -1,0 +1,150 @@
+#!/usr/bin/php
+
+<?php
+
+class Init
+{	
+	public function __construct()
+	{
+		echo "请选择操作选项:\n1：设置hostname，salt_id，zabbix hostname\n2：设置相关文件夹,文件权限,iptables\n3：安装git等相关软件\n";
+		
+		$action = trim(fgets(STDIN));
+		switch ($action) {
+			case '1':
+				echo '请输入编号（es-xxx）：';
+				$this->setSaltHost();		
+				$this->setZabbixHost();
+				$this->setHostname();
+				echo "设置hostname，salt_id，zabbix hostname完成";
+				break;
+			case '2':
+				$this->setFile();
+				$this->setfolder();
+				$ths->installsoftware();
+				echo '文件夹,文件权限,iptables设置完成';
+				break;
+			case '3':
+				
+				echo '安装相关软件完成';
+				break;
+			case '4':
+				$this->setIptables();
+				break;
+			
+			default:
+				echo "没有选择，脚本退出！";
+				break;
+		}
+		
+		// $this->setNginx();	
+		
+	}
+
+	protected  function installsoftware()
+	{
+		system('sudo apt-get install -y git');
+		system('sudo add-apt-repository -y ppa:saltstack/salt&&sudo apt-get update&&sudo apt-get install -y salt-minion');
+		system('command');
+		system('command');
+
+
+		Zabbix 2.2 for Ubuntu 12.04 LTS:
+		system('wget http://repo.zabbix.com/zabbix/2.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_2.2-1+precise_all.deb&& dpkg -i zabbix-release_2.2-1+precise_all.deb');
+
+Zabbix 2.2 for Ubuntu 14.04 LTS:
+		system('wget http://repo.zabbix.com/zabbix/2.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_2.2-1+trusty_all.deb&&dpkg -i zabbix-release_2.2-1+trusty_all.deb');
+		system('apt-get update&&apt-get install zabbix-agent');
+
+
+
+
+
+	}
+
+	protected function setFile()
+	{			
+		system('sudo chmod 600 /root/hostconsole/config/rsync.pwd');
+	}
+
+	protected function setfolder()
+	{
+		system('sudo chown www-data:www-data /var/www/edusoho/ -Rf');
+	}
+
+	protected function setIptables()
+	{
+		system('sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT 
+			sudo iptables -A INPUT -i lo -j ACCEPT 
+			sudo iptables -A INPUT -p TCP --dport 80 -j ACCEPT 
+			sudo iptables -A INPUT -p TCP --dport 443 -j ACCEPT
+			sudo iptables -A INPUT -p TCP --dport 1122 -j ACCEPT
+			sudo iptables -A INPUT -p TCP --dport 10061 -j ACCEPT
+			sudo iptables -A INPUT -p TCP --dport 10050 -j ACCEPT
+			sudo iptables -A INPUT -p icmp -j ACCEPT 
+			sudo iptables -A INPUT -i p2p1 -j ACCEPT 
+			sudo iptables -P INPUT DROP
+			iptables-save > /etc/iptables-rules
+			ip6tables-save > /etc/ip6tables-rules');
+
+		system("sudo echo 'pre-up iptables-restore < /etc/iptables-rules\npre-up ip6tables-restore < /etc/ip6tables-rules'>>/etc/network/interfaces");
+	}
+
+	protected function setNginx()
+	{		
+		system("sudo sed -i '/sendfile on;/ i server {listen 80 default;return 500;}' /etc/nginx/nginx.conf");
+	}
+
+	protected function getNewHostname()
+	{	
+		return $hostname = trim(fgets(STDIN));	
+	}
+
+	protected function setHostname()
+	{
+		$hostname = $this->getNewHostname();
+		system("sudo echo $hostname |sudo tee /etc/hostname");
+	}
+
+	protected function setSaltHost()
+	{
+		$hostname =$this->getNewHostname();
+
+		exit($hostname);
+		system("sudo echo $hostname |sudo tee /etc/salt/minion_id");
+	}
+
+	protected function setZabbixHost()
+	{
+		$hostname = $this->getNewHostname();
+		system("sudo sed -i 's/Hostname=.*/Hostname=$hostname/g' /etc/zabbix/zabbix_agentd.conf");
+	}
+	
+	protected function backupShell()
+	{
+		$hostname = $this->getNewHostname();
+		
+		system('sudo git clone http://gitlab.howzhi.net/edusoho/hostconsole.git');
+		system("/root/hostconsole/console host:set-hostname $hostname");
+	}
+
+
+	protected function upgradeSystem()
+	{
+		system('echo mysql-server hold | sudo dpkg --set-selections&&echo php5 hold | sudo dpkg --set-selections&&echo php5-fpm hold | sudo dpkg --set-selections&&echo nginx hold | sudo dpkg --set-selections&&echo mysql hold | sudo dpkg --set-selections');
+		system('sudo apt-get update&&sudo apt-get -y dist-upgrade');
+
+	}
+
+
+	protected function restartServer()
+	{
+		system('sudo /etc/init.d/php5-fpm restart&&sudo /etc/init.d/nginx restart&&sudo /etc/init.d/mysql restart');
+		system('sudo service nginx restart&&sudo service mysql restart&&sudo service php5-fpm restart');
+	}
+}
+
+echo "欢迎使用es-os 初始化程序...\n";
+$test = new Init();
+
+?>
+

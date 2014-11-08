@@ -1,0 +1,89 @@
+#!/usr/bin/php
+
+<?php
+/*
+ *
+ */
+class Backup
+{
+	
+	function __construct()
+	{
+		$this->masterRun();
+	}
+
+	protected function masterRun()
+	{
+		set_time_limit(0);
+		$backupNum = 1;	
+		$SlaveMaxId = $this->getSlaveMaxId();
+		
+		while ($backupNum <= $SlaveMaxId){
+
+			$slaveSaltName = $this->getSlaveSaltName($backupNum);
+			if (!empty($slaveSaltName)) {
+				
+				$backup = 'sudo salt '."$slaveSaltName ".'cmd.run '."'/root/hostconsole/console edusoho:backup'";
+				system("$backup");
+				echo $slaveSaltName.'备份命令已发送'."\n";
+				sleep(3);
+			
+			}else {	
+
+				echo "此主机不存在，跳过.....";
+			}
+
+			$backupNum ++;
+		}
+
+		echo "备份结束"."\n";
+		exit();
+	}
+
+	protected function getSlaveSaltName($backupNum)
+	{
+		
+		$rs = $this->dbh() ->query("select Saltname from server where IsBackup=0  AND ID=$backupNum");
+		return $Saltname = $rs->fetch()['Saltname'];	
+	}
+
+	protected function getSlaveMaxId()
+	{
+		
+		$rs = $this->dbh() ->query("select Max(ID) from server");
+		return $SlaveMaxId = $rs->fetch() ['Max(ID)'];	
+	}
+
+
+
+	protected function addSlave()
+	{
+		$rs =  $this->dbh() ->query("INSERT INTO server(`Username`, `Passwd`, `Hostname`, `Saltname`, `Ip`) 
+
+			VALUES ($Username, $Passwd, $Hostname, $Saltname, $Ip)");
+		// var_dump($rs->fetch());
+		// exit;
+	}
+
+
+	private function dbh()
+	{
+
+		try {
+
+		        $dbh = new PDO('mysql:host=localhost;port=3306;dbname=es-backup', 'root', 'root', array( PDO::ATTR_PERSISTENT => false));
+			   
+		    } catch (PDOException $e) {
+		       
+		        print $e->getMessage() ;
+		        die();
+		    }
+
+		return $dbh;
+	}
+
+}
+
+$test = new Backup();
+
+?>
