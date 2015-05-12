@@ -4,166 +4,171 @@
 
 class Common {
 
-	function __construct() {
-
-	}
-
 	//冒泡排序
-	private function bubble_sort($arr) {
-	    
-		$n = count($arr);
+	public static function bubble_sort($array) {
 
-	    for ($i=0;$i<$n-1;$i++){
-	    
-		    for ($j=$i+1;$j<$n;$j++) {
-	    
-			     if ($arr[$j]<$arr[$i]) {
-	        
-			        $temp=$arr[$i];
-				    $arr[$i]=$arr[$j];
-	                $arr[$j]=$temp;
-	            }
-	        }
-	    }
+		$count = count($array);
 
-	    return $arr;
+		if ($count <= 0) {
+
+			return false;
+		}
+
+		for ($i = 0; $i < $count; $i++) {
+
+			for ($k = $count - 1; $k > $i; $k--) {
+
+				if ($array[$k] < $array[$k - 1]) {
+
+					$tmp = $array[$k];
+					$array[$k] = $array[$k - 1];
+					$array[$k - 1] = $tmp;
+				}
+			}
+		}
+
+		return $array;
 	}
-
 
 	//二分查找-递归
-	function bin_search($arr,$low,$high,$value) {
+	public static function bin_search($arr, $low, $high, $value) {
 
-		if($low>$high){
+		if ($low > $high) {
 
 			return false;
 
 		} else {
-		
-			$mid=floor(($low+$high)/2);
 
-	        if($value==$arr[$mid]){
+			$mid = floor(($low + $high) / 2);
 
-	            return $mid;
-			}elseif($value<$arr[$mid]){
+			if ($value == $arr[$mid]) {
 
-				return bin_search($arr,$low,$mid-1,$value);
-			
-			}else{
+				return $mid;
 
-	            return bin_search($arr,$mid+1,$high,$value);
+			} elseif ($value < $arr[$mid]) {
+
+				return self::bin_search($arr, $low, $mid - 1, $value);
+
+			} else {
+
+				return self::bin_search($arr, $mid + 1, $high, $value);
 			}
 		}
 	}
 
-
 	//二分查找-非递归
+	public static function bin_search_no($arr, $low, $high, $value) {
 
-	public function bin_search($arr,$low,$high,$value) {
-    
-		while($low<=$high) {
+		while ($low <= $high) {
 
-            $mid=floor(($low+$high)/2);
-        
-			if($value==$arr[$mid]){
+			$mid = floor(($low + $high) / 2);
+			if ($value == $arr[$mid]) {
 
-                return $mid;
-			
-			}elseif($value<$arr[$mid]){
+				return $mid;
 
-                $high=$mid-1;
+			} elseif ($value < $arr[$mid]) {
 
-			}else{
+				$high = $mid - 1;
 
-                $low=$mid+1;
+			} else {
+
+				$low = $mid + 1;
 			}
 		}
 
-	    return false;
+		return false;
 	}
 
 	//快速排序
+	public static function quick_sort($arr) {
 
-	public function quick_sort($arr) {
-    
-		$n=count($arr);
-		if($n<=1)
-        
+		$n = count($arr);
+
+		if ($n <= 1) {
+
 			return $arr;
-    
-		$key=$arr[0];
-    
-		$left_arr=array();
-    
-		$right_arr=array();
-    
-		for($i=1;$i<$n;$i++) {
-        
-			if($arr[$i]<=$key){
+		}
 
-				$left_arr[]=$arr[$i];
+		$key = $arr[0];
+		$left_arr = array();
+		$right_arr = array();
 
-			}else{
+		for ($i = 1; $i < $n; $i++) {
 
-                $right_arr[]=$arr[$i];
+			if ($arr[$i] <= $key) {
+
+				$left_arr[] = $arr[$i];
+
+			} else {
+
+				$right_arr[] = $arr[$i];
 			}
-        }
-    $left_arr=quick_sort($left_arr);
-    $right_arr=quick_sort($right_arr);
-    return array_merge($left_arr,array($key),$right_arr);
-}
+		}
+
+		$left_arr = quick_sort($left_arr);
+		$right_arr = quick_sort($right_arr);
+
+		return array_merge($left_arr, array($key), $right_arr);
+	}
 
 	//插入排序
-	public function insertSort($arr) {
-    
-		$n=count($arr);
+	public static function insertSort($arr) {
 
-        for($i=1;$i<$n;$i++) {
+		$n = count($arr);
 
-			$tmp=$arr[$i];
-			$j=$i-1;
+		for ($i = 1; $i < $n; $i++) {
 
-	        while($arr[$j]>$tmp) {
+			$tmp = $arr[$i];
+			$j = $i - 1;
 
-	            $arr[$j+1]=$arr[$j];
-	            $arr[$j]=$tmp;
-	            $j--;
+			while ($arr[$j] > $tmp) {
 
-	            if($j<0){
+				$arr[$j + 1] = $arr[$j];
+				$arr[$j] = $tmp;
+				$j--;
+				if ($j < 0) {
 
-	                break;
-
+					break;
 				}
-	        }
-        }
+			}
+		}
 
-        return $arr;
+		return $arr;
 	}
 
 	// 选择排序
 	public function select_sort($arr) {
 
-        $n=count($arr);
+		$n = count($arr);
 
-	    for($i=0;$i<$n;$i++) {
+		for ($i = 0; $i < $n; $i++) {
 
-	        $k=$i;
-	        for($j=$i+1;$j<$n;$j++) {
-		
-	           if($arr[$j]<$arr[$k])
-	               $k=$j;
-	        }
+			$k = $i;
+			for ($j = $i + 1; $j < $n; $j++) {
 
-	        if($k!=$i) {
+				if ($arr[$j] < $arr[$k]) {
+					$k = $j;
+				}
 
-	            $temp=$arr[$i];
-	            $arr[$i]=$arr[$k];
-	            $arr[$k]=$temp;
-	        }
-	    }
+			}
+			if ($k != $i) {
 
-        return $arr;
+				$temp = $arr[$i];
+				$arr[$i] = $arr[$k];
+				$arr[$k] = $temp;
+			}
+		}
+
+		return $arr;
 	}
 
 }
+
+// $arr = array(3, 5, 1, 4, 2);
+// $s = Common::bubble_sort($arr);
+// print_r($s);
+
+$bin_search = Common::bin_search($arr, 1, 5, 6);
+print_r($bin_search);
 
 ?>
