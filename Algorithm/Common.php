@@ -1,5 +1,3 @@
-#!/usr/bin/php
-
 <?php
 
 class Common {
@@ -105,8 +103,8 @@ class Common {
 			}
 		}
 
-		$left_arr = quick_sort($left_arr);
-		$right_arr = quick_sort($right_arr);
+		$left_arr = self::quick_sort($left_arr);
+		$right_arr = self::quick_sort($right_arr);
 
 		return array_merge($left_arr, array($key), $right_arr);
 	}
@@ -161,14 +159,6 @@ class Common {
 
 		return $arr;
 	}
-
 }
-
-// $arr = array(3, 5, 1, 4, 2);
-// $s = Common::bubble_sort($arr);
-// print_r($s);
-
-$bin_search = Common::bin_search($arr, 1, 5, 6);
-print_r($bin_search);
 
 ?>
